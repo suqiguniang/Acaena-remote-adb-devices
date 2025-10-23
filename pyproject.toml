@@ -1,0 +1,50 @@
+[project]
+name = "remote-adb-panel"
+version = "0.1.0"
+description = "Web panel for remote Android device management via scrcpy"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.13"
+keywords = ["android", "adb", "scrcpy", "remote", "panel"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "jinja2>=3.1.4",
+    "pydantic-settings[dotenv]>=2.3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/remote-adb-panel"
+Issues = "https://github.com/yourusername/remote-adb-panel/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit>=3.7.0",
+    "mypy>=1.10.0",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]  # FastAPI Depends() calls in defaults
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+exclude = ["static/"]
