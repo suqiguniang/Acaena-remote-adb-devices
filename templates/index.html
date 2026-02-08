@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote ADB Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+        }
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        .device-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .device-card:hover {
+            border-color: #4a9eff;
+            background: #1e1e1e;
+        }
+        .device-model {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+        .device-serial {
+            font-size: 0.75rem;
+            color: #666;
+            font-family: monospace;
+            margin-bottom: 0.75rem;
+            word-break: break-all;
+        }
+        .device-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: #1a3a1a;
+            color: #4caf50;
+            border: 1px solid #2a5a2a;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #555;
+        }
+        .empty-state h2 { font-size: 1.25rem; margin-bottom: 0.5rem; color: #888; }
+        .empty-state code {
+            background: #1a1a1a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .refresh-hint {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>Remote ADB Panel</h1>
+    <p class="subtitle">Connected devices — click to open remote control</p>
+
+    {% if devices %}
+    <div class="device-grid">
+        {% for device in devices %}
+        <a class="device-card" href="/{{ device.serial | urlencode }}">
+            <div class="device-model">{{ device.model }}</div>
+            <div class="device-serial">{{ device.serial }}</div>
+            <span class="device-badge">{{ device.state }}</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h2>No devices connected</h2>
+        <p>Connect an Android device via USB or WiFi ADB:</p>
+        <br>
+        <code>adb connect &lt;ip&gt;:5555</code>
+        <p class="refresh-hint">Page auto-refreshes every 5 seconds</p>
+    </div>
+    {% endif %}
+
+    <script>
+        // Auto-refresh when no devices are connected
+        {% if not devices %}
+        setTimeout(() => location.reload(), 5000);
+        {% endif %}
+    </script>
+</body>
+</html>

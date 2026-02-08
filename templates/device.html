@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ model }} — Remote ADB Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        header a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        header a:hover { color: #aaa; }
+        header h1 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #ddd;
+        }
+        header .serial {
+            font-size: 0.75rem;
+            color: #555;
+            font-family: monospace;
+            margin-left: auto;
+        }
+        .video-container {
+            position: relative;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+        video {
+            display: block;
+            max-width: 100vw;
+            max-height: calc(100vh - 120px);
+            background: #000;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+        video:focus { border-color: #4a9eff; }
+        #status-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: #ccc;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/">← All devices</a>
+        <h1>{{ model }}</h1>
+        <span class="serial">{{ serial }}</span>
+    </header>
+
+    <div class="video-container">
+        <video id="device-video" tabindex="0" autoplay playsinline muted></video>
+        <div id="status-message">Connecting…</div>
+    </div>
+
+    <script src="/static/js/vendor/exp-golomb.js"></script>
+    <script src="/static/js/vendor/h264-sps-parser.js"></script>
+    <script src="/static/js/vendor/jmuxer.min.js"></script>
+    <script src="/static/js/video_parser.js"></script>
+    <script src="/static/js/input.js"></script>
+    <script src="/static/js/device_client.js"></script>
+    <script>
+        const video = document.getElementById('device-video');
+        video.focus();
+
+        const client = new DeviceClient('{{ serial_encoded }}', video);
+        client.connect();
+
+        // Keep video focused for keyboard input
+        document.addEventListener('click', () => video.focus());
+    </script>
+</body>
+</html>
