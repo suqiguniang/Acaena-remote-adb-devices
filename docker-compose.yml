@@ -1,0 +1,15 @@
+services:
+  panel:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # For USB-connected Android devices uncomment the lines below.
+    # WARNING: privileged mode gives the container full host device access.
+    # For WiFi ADB (adb connect <ip>:<port>) these lines are NOT needed.
+    #
+    # volumes:
+    #   - /dev/bus/usb:/dev/bus/usb
+    # privileged: true
+    restart: unless-stopped
