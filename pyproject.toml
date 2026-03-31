@@ -1,5 +1,5 @@
 [project]
-name = "remote-adb-panel"
+name = "acaena-remote-adb-devices"
 version = "0.1.0"
 description = "Web panel for remote Android device management via scrcpy"
 readme = "README.md"
@@ -20,8 +20,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/remote-adb-panel"
-Issues = "https://github.com/yourusername/remote-adb-panel/issues"
+Homepage = "https://github.com/someufoperson/Acaena-remote-adb-devices"
+Issues = "https://github.com/someufoperson/Acaena-remote-adb-devices/issues"
 
 [build-system]
 requires = ["hatchling"]

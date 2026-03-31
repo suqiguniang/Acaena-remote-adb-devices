@@ -1,0 +1,9 @@
+# Force LF line endings in the repository for all text files.
+# Developers on Windows will get CRLF in their working copy automatically.
+* text=auto eol=lf
+
+# Explicitly binary — never touch line endings
+*.min.js binary
+*.jar     binary
+*.png     binary
+*.jpg     binary
