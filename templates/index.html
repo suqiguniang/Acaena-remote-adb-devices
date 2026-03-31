@@ -13,10 +13,20 @@
             min-height: 100vh;
             padding: 2rem;
         }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .brand img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
         h1 {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
             color: #fff;
         }
         .subtitle {
@@ -85,7 +95,10 @@
     </style>
 </head>
 <body>
-    <h1>Remote ADB Panel</h1>
+    <div class="brand">
+        <img src="/static/img/logo.png" alt="Acaena logo">
+        <h1>Acaena</h1>
+    </div>
     <p class="subtitle">Connected devices — click to open remote control</p>
 
     {% if devices %}

@@ -1,4 +1,8 @@
-# remote-adb-panel
+# Acaena — Remote ADB Devices
+
+<p align="center">
+  <img src="static/img/logo.png" alt="Acaena logo" width="180"/>
+</p>
 
 Web panel for remote Android device management via [scrcpy](https://github.com/Genymobile/scrcpy).
 Access any connected device at `http://your-server/<serial_number>`.
