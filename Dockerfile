@@ -1,26 +1,22 @@
 FROM python:3.13-slim
 
-WORKDIR /app
-
-# 安装系统依赖
-RUN apt-get update && apt-get install -y \
-    android-tools-adb \
-    curl \
+# Install ADB
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    adb \
     && rm -rf /var/lib/apt/lists/*
 
-# 下载 scrcpy-server
-ARG SCRCPY_VERSION=2.3.1
-RUN curl -L -o /app/scrcpy-server \
-    https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-server-v${SCRCPY_VERSION}
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# 安装 uv
-RUN pip install --no-cache-dir uv
+WORKDIR /app
 
-# 复制整个项目
+# Install dependencies first (layer cache)
+COPY pyproject.toml uv.lock .python-version ./
+RUN uv sync --frozen --no-dev
+
+# Copy source
 COPY . .
 
-# 创建虚拟环境并安装依赖（但不安装项目本身）
-RUN uv venv && uv sync --no-dev --no-install-project
-
 EXPOSE 8000
+
 CMD ["uv", "run", "main.py"]
