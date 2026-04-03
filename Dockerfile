@@ -16,17 +16,16 @@ RUN curl -L -o /app/scrcpy-server \
 # 安装 uv
 RUN pip install --no-cache-dir uv
 
-# 先只复制 pyproject.toml（利用 Docker 层缓存）
-COPY pyproject.toml ./
+# 复制 pyproject.toml 和 README.md（hatchling 构建时需要）
+COPY pyproject.toml README.md ./
+# 如果项目有 LICENSE 文件也复制（可选）
+COPY LICENSE* ./
 
-# 创建虚拟环境并安装依赖（uv 会自动生成 uv.lock）
+# 创建虚拟环境并安装依赖
 RUN uv venv && uv sync --no-dev
 
 # 复制项目其余代码
 COPY . .
 
-# 暴露 WebSocket 和 Web 端口（根据项目实际端口调整，默认 8000）
 EXPOSE 8000
-
-# 启动命令（使用 uv 运行）
 CMD ["uv", "run", "main.py"]
