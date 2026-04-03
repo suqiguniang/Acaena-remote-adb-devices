@@ -1,16 +1,12 @@
 name: Build Docker Image and Upload to Release
 
 on:
-  # 手动触发（可选）
-  workflow_dispatch:
-  # 当创建 Release 时触发
+  workflow_dispatch:          # 手动触发
   release:
-    types: [created]
-  # 也可以推送到 main/master 时构建（但不自动上传到 Release）
+    types: [created]          # 创建 Release 时触发
   # push:
-  #   branches: [ main, master ]
+  #   branches: [ main, master ]   # 按需开启
 
-# 为上传 Release 资产授予写入权限
 permissions:
   contents: write
   packages: write
@@ -26,7 +22,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      # 登录到 GitHub Container Registry (ghcr.io)
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
         with:
@@ -34,7 +29,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 提取标签和元数据（用于推送到 ghcr.io）
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v6
@@ -45,10 +39,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=
-            # 如果是 Release 触发，添加 release 标签
             type=raw,value=latest
 
-      # 构建并推送镜像到 ghcr.io
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
@@ -56,22 +48,29 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64   # 如果需要 arm64，可改为 linux/amd64,linux/arm64
+          platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 保存镜像为 .tar 文件（用于 Release 附件）
-      - name: Save Docker image as tar
+      # 保存镜像为 .tar 并压缩
+      - name: Save Docker image as tar.gz
         run: |
-          # 从 meta 输出中取第一个 tag 作为镜像名
           IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1)
           docker pull $IMAGE_TAG
           docker save $IMAGE_TAG -o acaena-image.tar
-          # 压缩一下（可选）
           gzip acaena-image.tar
 
-      # 如果是 Release 触发，将 .tar.gz 文件上传到 Release
-      - name: Upload tar to Release
+      # ========= 新增：上传到 Actions Artifacts（页面可下载） =========
+      - name: Upload tar.gz as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: acaena-docker-image
+          path: acaena-image.tar.gz
+          if-no-files-found: error
+          retention-days: 90     # 保留90天，按需修改
+
+      # ========= 原有：仅当 Release 触发时上传到 Release =========
+      - name: Upload tar.gz to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
