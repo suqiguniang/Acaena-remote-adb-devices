@@ -1,22 +1,25 @@
-FROM python:3.13-slim
+# 基础镜像
+FROM python:3.11-slim
 
-# Install ADB
+# 工作目录
+WORKDIR /app
+
+# 系统依赖：安装 adb 工具
 RUN apt-get update && apt-get install -y --no-install-recommends \
     adb \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# 复制项目依赖文件
+COPY pyproject.toml ./
 
-WORKDIR /app
+# 安装 Python 依赖（兼容无 uv.lock 场景）
+RUN pip install --no-cache-dir -e .
 
-# Install dependencies first (layer cache)
-COPY pyproject.toml uv.lock .python-version ./
-RUN uv sync --frozen --no-dev
-
-# Copy source
+# 复制全部项目代码
 COPY . .
 
-EXPOSE 8000
+# 暴露端口（根据项目默认端口）
+EXPOSE 5810 8000
 
-CMD ["uv", "run", "main.py"]
+# 启动命令
+CMD ["python", "app.py"]
