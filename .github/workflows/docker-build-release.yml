@@ -46,7 +46,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=
             # 如果是 Release 触发，添加 release 标签
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=raw,value=latest
 
       # 构建并推送镜像到 ghcr.io
       - name: Build and push Docker image
