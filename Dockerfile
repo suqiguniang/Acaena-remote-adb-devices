@@ -16,11 +16,11 @@ RUN curl -L -o /app/scrcpy-server \
 # 安装 uv
 RUN pip install --no-cache-dir uv
 
-# 复制整个项目（包括 pyproject.toml, README.md, 源代码目录）
+# 复制整个项目
 COPY . .
 
-# 创建虚拟环境并安装依赖（现在能找到源代码了）
-RUN uv venv && uv sync --no-dev
+# 创建虚拟环境并安装依赖（但不安装项目本身）
+RUN uv venv && uv sync --no-dev --no-install-project
 
 EXPOSE 8000
 CMD ["uv", "run", "main.py"]
